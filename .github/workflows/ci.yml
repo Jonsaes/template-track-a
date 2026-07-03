@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # La plantilla no incluye la app generada; la CI se activa sola
+      # en cuanto exista package.json (paso 4 del README).
+      - name: Comprobar scaffolding
+        id: scaffold
+        run: |
+          if [ -f package.json ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Aún sin package.json — CI en espera hasta el scaffolding (README, paso 4)."
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.scaffold.outputs.ready == 'true'
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        if: steps.scaffold.outputs.ready == 'true'
+        run: npm ci
+
+      - name: Lint
+        if: steps.scaffold.outputs.ready == 'true'
+        run: npm run lint
+
+      - name: Build
+        if: steps.scaffold.outputs.ready == 'true'
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder

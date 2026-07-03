@@ -1,0 +1,26 @@
+# Secretos — NUNCA subir
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Next.js / Node
+node_modules/
+.next/
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+
+# Supabase local
+supabase/.temp/
+supabase/.branches/
+
+# IDE / SO
+.vscode/
+.idea/
+.DS_Store
+
+# Claude Code — sesión local (las reglas compartidas van en CLAUDE.md, que SÍ se sube)
+.claude/settings.local.json
